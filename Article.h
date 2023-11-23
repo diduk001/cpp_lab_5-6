@@ -34,13 +34,13 @@ public:
 
     const char **getAuthors() const { return (const char **) authors; }
 
-    const size_t getAuthorsCount() const { return authorsCount; }
+    size_t getAuthorsCount() const { return authorsCount; }
 
     const char *getArticleTitle() const { return articleTitle; }
 
-    const double getCitationCoefficient() const { return citationCoefficient; }
+    double getCitationCoefficient() const { return citationCoefficient; }
 
-    const size_t getArticleVolume() const { return articleVolume; }
+    size_t getArticleVolume() const { return articleVolume; }
 
     const char *getLanguage() const { return language; }
 
@@ -62,4 +62,15 @@ public:
 // Output
 std::ostream &operator<<(std::ostream &out, const Article &article);
 
+// Author's article number
+size_t getAuthorsArticleNumber(const Article *articles, size_t articlesLen, const char *authorsName);
+
+// Average volume of articles, which citation coefficient is larger than pivotCoefficient
+size_t averageVolumeWithCoefficientLargerThan(const Article *articles, size_t articlesLen, double pivotCoefficient);
+
+// Get author's average citation rate from the articles
+double getAuthorsCitationRate(const Article *articles, size_t articlesLen, const char *author);
+
+// Sort authors by average citation rate
+void sortAuthorsByCitationRate(const Article *articles, size_t articlesLen, char** authors, size_t authorsLen);
 #endif //CPP_LAB_56_ARTICLE_H

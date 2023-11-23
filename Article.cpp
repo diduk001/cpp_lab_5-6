@@ -87,3 +87,60 @@ std::ostream &operator<<(std::ostream &out, const Article &article) {
     out << ")";
     return out;
 }
+
+size_t getAuthorsArticleNumber(const Article *articles, size_t articlesLen, const char *authorsName) {
+    size_t result = 0;
+
+    for (size_t articleIdx = 0; articleIdx < articlesLen; articleIdx++) {
+        const Article curArticle = articles[articleIdx];
+        const char **authors = curArticle.getAuthors();
+        for (size_t authorIdx = 0; authorIdx < curArticle.getAuthorsCount(); authorIdx++)
+            if (strcmp(authors[authorIdx], authorsName) == 0)
+                result++;
+    }
+
+    return result;
+}
+
+size_t averageVolumeWithCoefficientLargerThan(const Article *articles, size_t articlesLen, double pivotCoefficient) {
+    size_t volumeSum = 0;
+    size_t filteredArticles = 0;
+
+    for (size_t articleIdx = 0; articleIdx < articlesLen; articleIdx++) {
+        const Article curArticle = articles[articleIdx];
+        if (curArticle.getCitationCoefficient() > pivotCoefficient) {
+            volumeSum += curArticle.getArticleVolume();
+            filteredArticles++;
+        }
+    }
+
+    return filteredArticles == 0 ? 0 : volumeSum / filteredArticles;
+}
+
+double getAuthorsCitationRate(const Article *articles, size_t articlesLen, const char *author) {
+    double citationCoefficientsSum = 0;
+    size_t citationCoefficientsLen = 0;
+    for (size_t articleIdx = 0; articleIdx < articlesLen; articleIdx++) {
+        const Article curArticle = articles[articleIdx];
+        const char **curAuthors = curArticle.getAuthors();
+        const size_t curAuthorsCount = curArticle.getAuthorsCount();
+        for (size_t authorIdx = 0; authorIdx < curAuthorsCount; authorIdx++) {
+            if (strcmp(curAuthors[authorIdx], author) == 0) {
+                citationCoefficientsSum += curArticle.getCitationCoefficient();
+                citationCoefficientsLen++;
+            }
+        }
+    }
+
+    return citationCoefficientsLen == 0 ? 0 : citationCoefficientsSum / (double)citationCoefficientsLen;
+}
+
+void sortAuthorsByCitationRate(const Article *articles, size_t articlesLen, char **authors, size_t authorsLen) {
+    for (size_t step = 0; step < authorsLen - 1; step++) {
+        for (size_t idx = 0; idx < authorsLen - step - 1; idx++) {
+            double curAuthorsRate = getAuthorsCitationRate(articles, articlesLen, authors[idx]);
+            double nxtAuthorsRate = getAuthorsCitationRate(articles, articlesLen, authors[idx + 1]);
+            if (curAuthorsRate > nxtAuthorsRate) std::swap(authors[idx], authors[idx + 1]);
+        }
+    }
+}
